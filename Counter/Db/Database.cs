@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Counter.Entity;
+using MongoDB.Driver;
 
 namespace Counter.Db
 {
@@ -17,5 +18,6 @@ namespace Counter.Db
             MongoDatabase = client.GetDatabase(databaseName);           
 
         }
+        public IMongoCollection<ErrorDocument> ErrodDocuments { get { return MongoDatabase.GetCollection<ErrorDocument>("ErrorDocument"); } }
     }
 }

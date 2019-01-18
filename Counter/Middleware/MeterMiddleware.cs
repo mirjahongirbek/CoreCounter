@@ -7,7 +7,7 @@ using Counter.Entity;
 using CounterRule;
 using Microsoft.AspNetCore.Http;
 
-namespace Counter
+namespace Counter.Middleware
 {
     public class MeterMiddleware
     {
@@ -40,13 +40,17 @@ namespace Counter
             await _next.Invoke(context);
             document.EllepsitTime = timer.ElapsedMilliseconds;
             document.ResponseStutus = context.Response.StatusCode;
-            
-            if (context.Response.StatusCode!=200)
+            if (context.Response.StatusCode != 200)
             {
                 GetRequest(context, document);
                 GetResponse(context, document);
-                await _service.ErrorResponse(url,context, document);
-            }else  await  _service.Request(url, context,document);
+                Task.Run(async () =>
+                {
+                    await _service.ErrorResponse(url, context, document);
+                });
+
+            }
+            else Task.Run(async () => { await _service.Request(url, context, document); });
             
         }
         public void GetRequest(HttpContext context, Document document)
@@ -68,47 +72,7 @@ namespace Counter
             context.Response.Body.Read(data, 0, data.Length);
             document.ResponseData = data;
         }
-        /*
-        public async Task Invoke(HttpContext context)
-        {
-            string authHeader = context.Request.Headers["Authorization"];
-            if (authHeader != null && authHeader.StartsWith("Basic "))
-            {
-                // Get the encoded username and password
-                var encodedUsernamePassword = authHeader.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[1]?.Trim();
-                // Decode from Base64 to string
-                var decodedUsernamePassword = Encoding.UTF8.GetString(Convert.FromBase64String(encodedUsernamePassword));
-                // Split username and password
-                var username = decodedUsernamePassword.Split(':', 2)[0];
-                var password = decodedUsernamePassword.Split(':', 2)[1];
-                // Check if login is correct
-                if (await IsAuthorized(username, password))
-                {
-                    await next1.Invoke(context);
-                    return;
-                }
-            }
-            // Return authentication type (causes browser to show login dialog)
-            context.Response.Headers["WWW-Authenticate"] = "Basic";
-            // Add realm if it is not null
-            if (!string.IsNullOrWhiteSpace(realm))
-            {
-                context.Response.Headers["WWW-Authenticate"] += $" realm=\"{realm}\"";
-            }
-            // Return unauthorized
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-        }
-        // Make your own implementation of this
-        public async Task<bool> IsAuthorized(string username, string password)
-        {
-
-            var customer = await _customers.GetCustomersUserName(username);
-            if (customer == null)
-                return false;
-            // Check that username and password are correct
-            return true;
-
-        }*/
+       
     }
 
 }

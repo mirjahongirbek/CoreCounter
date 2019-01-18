@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Counter;
 using Counter.Entity;
+using Counter.Middleware;
 using CounterRule;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,7 +31,7 @@ namespace Test
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.AddSingleton<IMeterService<MeterDocument, Document>>(new MeterService("mongodb://localhost:27017/meter", 500));
+            services.AddSingleton<IMeterService<MeterDocument, Document>>(new MeterService("mongodb://localhost:27017/meter", 5000));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
