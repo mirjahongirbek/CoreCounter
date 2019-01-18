@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CounterRule", "CounterRule\CounterRule.csproj", "{F60BD9A1-0F28-4315-8FE6-7683A3AAF718}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Counter", "Counter\Counter.csproj", "{90038AF7-BFFA-43EE-AD67-5C6F00C3D4F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{6C93BEF4-3D9C-4B34-8C6B-B981E39A78F8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F60BD9A1-0F28-4315-8FE6-7683A3AAF718}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F60BD9A1-0F28-4315-8FE6-7683A3AAF718}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F60BD9A1-0F28-4315-8FE6-7683A3AAF718}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F60BD9A1-0F28-4315-8FE6-7683A3AAF718}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90038AF7-BFFA-43EE-AD67-5C6F00C3D4F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90038AF7-BFFA-43EE-AD67-5C6F00C3D4F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90038AF7-BFFA-43EE-AD67-5C6F00C3D4F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90038AF7-BFFA-43EE-AD67-5C6F00C3D4F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C93BEF4-3D9C-4B34-8C6B-B981E39A78F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C93BEF4-3D9C-4B34-8C6B-B981E39A78F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C93BEF4-3D9C-4B34-8C6B-B981E39A78F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C93BEF4-3D9C-4B34-8C6B-B981E39A78F8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
