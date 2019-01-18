@@ -6,7 +6,7 @@ namespace Counter.Entity
 {
     public class Document:IMeterDocument
     {
-        public  DateTime Start { get; set; }        
+        public  long Start { get; set; }        
         public long EllepsitTime { get; set; }
         [BsonIgnoreIfDefault]
         public byte[] RequestData { get; set; }

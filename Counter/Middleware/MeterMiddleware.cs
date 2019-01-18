@@ -22,7 +22,7 @@ namespace Counter.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             Document document = new Document();
-            document.Start = DateTime.Now;
+            document.Start = DateTime.Now.ToUniversalTime().Second;
             string authHeader = context.Request.Headers["Authorization"];
             string url= context.Request.Path.Value.ParseUrl();
             if (authHeader != null && authHeader.StartsWith("Basic "))

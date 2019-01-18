@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System.Collections.Generic;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Counter.Entity
 {
@@ -9,7 +10,8 @@ namespace Counter.Entity
         public string Id { get; set; }
         public long Start { get; set; }
         public long EndTime { get; set; }
-        
+        public List<Document> Documents = new List<Document>();
+
         
     }
 

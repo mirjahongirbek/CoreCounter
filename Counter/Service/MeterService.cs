@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Counter.Entity;
 using MongoDB.Bson;
 using System.Linq;
-using System;
+using System.Collections.Generic;
 
 namespace Counter
 {
@@ -14,7 +14,7 @@ namespace Counter
     {
         Database _database;
         private int _time;
-        private IMeterService<IMeter, IMeterDocument> _next;
+        private IMeterService<IMeter<IMeterDocument>, IMeterDocument> _next;
         public int EllipseTime
         {
             get { return _time; } set{_time = value;}
@@ -29,7 +29,7 @@ namespace Counter
             _time = key;
             _database = new Database(Connectionstring);
         }
-        public MeterService(string ConnectionString, int key, IMeterService<IMeter,IMeterDocument> next):this(ConnectionString, key)
+        public MeterService(string ConnectionString, int key, IMeterService<IMeter<IMeterDocument>,IMeterDocument> next):this(ConnectionString, key)
         {
             _next = next;
         }
@@ -46,7 +46,7 @@ namespace Counter
             Add(url, document);
             if (_next != null) await _next.Request(url,context,document);
         }
-        #region
+        #region Success Request Response 
         /// <summary>
         /// Get Data from Cache if not exist return null
         /// </summary>
@@ -59,7 +59,7 @@ namespace Counter
             {
                 return null;
             }
-            var currentTime= DateTime.Now.ToUniversalTime().Second;
+            var currentTime= CacheData.Now;
             if (timer.Value.EndTime >= currentTime)
             {
                 return timer.Value;
@@ -76,7 +76,7 @@ namespace Counter
         {
             _database.MongoDatabase.GetCollection<MeterDocument>(url)
                 .FindOneAndUpdate(mbox => mbox.Id == data.Id, Builders<MeterDocument>
-                .Update.Set(m => m.End , DateTime.Now.ToUniversalTime().Second)
+                .Update.Set(m => m.End , CacheData.Now)
                 .Set(m => m.RequestCount, data.Count));
         }
         /// <summary>
@@ -90,7 +90,7 @@ namespace Counter
             {
                 Id = ObjectId.GenerateNewId().ToString(),
                 MethodUrl = url,
-                Start = DateTime.Now.ToUniversalTime().Second,
+                Start = CacheData.Now,
                 Request = new System.Collections.Generic.List<Document>()
             };
         }
@@ -105,9 +105,9 @@ namespace Counter
                 new Data
                 {
                     Count = 1,
-                    EndTime = DateTime.Now.ToUniversalTime().Second + EllipseTime,
+                    EndTime = CacheData.Now + EllipseTime,
                     Id = document.Id,
-                    StartTimer = DateTime.Now.ToUniversalTime().Second
+                    StartTimer = CacheData.Now
                 });
 
         }
@@ -151,11 +151,81 @@ namespace Counter
         }
         #endregion
 
-        public Task ErrorResponse(string url, HttpContext context, Document document)
+        #region Error Response Handler
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public List<Document> ErrorCache(string url)
         {
-            //_database.ErrodDocuments.
-            if (_next != null)
-                _next.ErrorResponse(url, context, document);
+             if(CacheData.ErrorBase== null)
+             {
+                AddUpdateErrorData(url);
+             }
+             if(CacheData.Now>= CacheData.ErrorBase.EndTime)
+             {
+               var err= CacheData.ErrorCache.FirstOrDefault(m => m.Key == url);
+                if(err.Key== null)
+                {
+                    return AddErroCache(url);
+                }
+                return err.Value;
+             }
+            return AddUpdateErrorData(url);
         }
+        public List<Document> AddUpdateErrorData(string url)
+        {
+            var id = CreateErrorMongo();
+            CacheData.ErrorBase = CreateCacheError(id);
+            CacheData.ErrorCache = new Dictionary<string, List<Document>>();
+            return AddErroCache(url);
+            
+        }
+        private List<Document> AddErroCache(string url)
+        {
+            CacheData.ErrorCache.Add(url, new List<Document>());
+            return CacheData.ErrorCache[url];
+        }
+        private string CreateErrorMongo()
+        {
+            string Id = ObjectId.GenerateNewId().ToString();
+            _database.ErrodDocuments.InsertOne(new ErrorDocument()
+            {
+                Documents = new System.Collections.Generic.List<Document>(),
+                Start = CacheData.Now,
+                Id = Id
+
+            });
+            return Id;
+        }
+        private ErrorBase CreateCacheError(string id)
+        {
+           return new ErrorBase()
+            {
+                Id = id,
+                Start = CacheData.Now,
+                EndTime= CacheData.Now + EllipseTime
+            };
+        }
+        #endregion
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="url">Exeption Url </param>
+        /// <param name="context"></param>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public async Task ErrorResponse(string url, HttpContext context, Document document)
+        {
+            var ErrorList= ErrorCache(url);
+            ErrorList.Add(document);
+            _database.ErrodDocuments.FindOneAndUpdate(mbox => mbox.Id ==CacheData.ErrorBase.Id, 
+                Builders<ErrorDocument>.Update.AddToSet(m => m.Documents, document));
+            if (_next != null)
+                Task.Run(() => { _next.ErrorResponse(url, context, document); });
+        }
+
+       
     }
 }

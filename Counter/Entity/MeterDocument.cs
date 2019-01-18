@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Counter.Entity
 {
-    public class MeterDocument:IMeter
+    public class MeterDocument:IMeter<Document>
     {
         [BsonId]
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
