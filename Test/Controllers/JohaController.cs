@@ -23,6 +23,18 @@ namespace Test.Controllers
         {
             return Json(modal);
         }
+        [HttpPost]
+        public  JsonResult Bed([FromBody] JohaModal modal)
+        {
+            this.HttpContext.Response.StatusCode = 418;
+            Console.WriteLine(modal);
+            return Json("sdcsd");
+        }
+        [Route("/api/joha/bad")]
+        public string bad([FromBody]JohaModal modal) {
+            this.HttpContext.Response.StatusCode = 418;
+            Console.Write(modal.name);
+            return "sdsd"; }
 
     }
     public class JohaModal{

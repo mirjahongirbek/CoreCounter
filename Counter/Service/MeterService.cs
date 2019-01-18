@@ -161,9 +161,9 @@ namespace Counter
         {
              if(CacheData.ErrorBase== null)
              {
-                AddUpdateErrorData(url);
+               return AddUpdateErrorData(url);
              }
-             if(CacheData.Now>= CacheData.ErrorBase.EndTime)
+             if(CacheData.ErrorBase.EndTime>=CacheData.Now )
              {
                var err= CacheData.ErrorCache.FirstOrDefault(m => m.Key == url);
                 if(err.Key== null)

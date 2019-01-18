@@ -31,7 +31,7 @@ namespace Test
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.AddSingleton<IMeterService<MeterDocument, Document>>(new MeterService("mongodb://localhost:27017/meter", 5000));
+            services.AddSingleton<IMeterService<MeterDocument, Document>>(new MeterService("mongodb://localhost:27017/meter", 5));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -53,6 +53,7 @@ namespace Test
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseMiddleware<MeterMiddleware>();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
